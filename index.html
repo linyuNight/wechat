@@ -1,0 +1,266 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no" />
+<meta name="apple-touch-fullscreen" content="YES" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<style>
+	button{
+		padding:10px;
+		color: red;
+	};
+	
+</style>
+</head>
+<body>
+	<button id="clearbtn">清除</button>
+	<!-- <button id="getSign">签名获取</button> -->
+	<button id="scanQRCode1">扫描</button>
+	<!-- <button id="onMenuShareTimeline">分享到朋友圈</button> -->
+	<button id="takephoto">拍照</button>
+	<button id="chooseImage">选择图片</button>
+	<button id="uploadImage">上传图片</button>
+	<button id="downloadImage">下载图片</button><br/>
+	<button id="chooseImage2">选择图片2</button>
+	<button id="uploadImage2">上传图片2</button>
+	<button id="downloadImage2">下载图片2</button>
+	<img style="width:100%;height:100%" id="img1" src="">1
+	<img style="width:100%;height:100%" id="img2" src="">2
+	<img style="width:100%;height:100%" id="img3" src="">3
+	<img style="width:100%;height:100%" id="img4" src="">4
+	<div id="goods-list-box">
+		
+	</div>
+	<div id="console" style="width:100%"></div>
+</body>
+<script type="text/javascript" src="./zepto.js"></script>
+<script type="text/javascript"
+	src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+
+<script type="text/javascript">
+	$(function() {
+		$("#clearbtn").on("click",function(){
+			localStorage.clear();
+		})
+		var localIds;
+		// var localId;
+		var serverId;
+		var localIds2;
+		var serverId2;
+        // $('#getSign').on('click', function(event) {
+        // 	event.preventDefault();
+    	$.post("/aa", {}, function(data) {
+			if (data != undefined && data != null) {
+				wx.config({
+					//debug : true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+
+					appId : 'wx44c2a43ac8952dc4', // 必填，appID公众号的唯一标识
+					timestamp : data.timestamp, // 必填，生成签名的时间戳
+					nonceStr : data.nonceStr, // 必填，生成签名的随机串
+					signature : data.signature,// 必填，签名，见附录1
+					jsApiList : [ 'scanQRCode','chooseImage','uploadImage','downloadImage' ]
+				// 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+				});
+				// alert('配置成功！');
+			}
+		});
+        // });
+		// $.ajax({ 
+		//  type: "GET", 	
+		// 	url: "json.txt",
+		// 	dataType: "json",
+		// 	// jsonpCallback:"success_jsonpCallback",
+		// 	success: function(data) {
+		// 		if (data.success) { 
+					
+		// 			// var mydata = JSON.parse(data);
+		// 			alert(data);
+		// 		} 
+		// 	}
+			    
+		// });
+
+		wx.ready(function() {
+			wx.checkJsApi({
+			    jsApiList: ['chooseWXPay','chooseImage'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
+			    success: function(res) {
+			        // 以键值对的形式返回，可用的api值true，不可用为false
+			        // 如：{"checkResult":{"chooseImage":true},"errMsg":"checkJsApi:ok"}
+			    	// alert(res.checkResult.chooseWXPay);
+			    	// alert(JSON.stringify(res));
+			    }
+			});
+			// 9.1.2 扫描二维码并返回结果
+			$('#scanQRCode1').on("click",function(){
+				wx.scanQRCode({
+				    needResult: 0, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+				    scanType: ["qrCode","barCode"], // 可以指定扫二维码还是一维码，默认二者都有
+				    success: function (res) {
+				    var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
+					}
+				});
+			})
+
+			$('#takephoto').on("click",function(){
+				wx.chooseImage({
+				    count: 1, // 默认9
+				    sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+				    sourceType: ['camera'], // 可以指定来源是相册还是相机，默认二者都有
+				    success: function (res) {
+				        var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+				        alert(res.localIds.length);
+				        $('#img1').attr("src",res.localIds[0]);
+				    }
+				});
+			})
+			
+			// $('#chooseImage').on("click",function(){
+			// 	wx.chooseImage({
+			// 	    count: 1, // 默认9
+			// 	    sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+			// 	    sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+			// 	    success: function (res) {
+			// 	    	if(localStorage.getItem("hehehe")!=undefined){
+			// 	    		//localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+			// 		        $('#img1').attr("src",localStorage.getItem("hehehe"));
+			// 	    	}else{
+			// 	    		localStorage.setItem("hehehe",res.localIds);
+			// 	    		alert(localStorage.getItem("hehehe"));
+			// 	    		$('#img1').attr("src",localStorage.getItem("hehehe"));
+			// 	    	}
+				        
+					        
+			// 		        // $('#img2').attr("src",res.localIds[1]);
+			// 		        // location.href="http://www.baidu.com";
+			// 	    },
+			// 	    cancel:function(){
+			// 	    	// alert(1);
+			// 	    }
+			// 	});
+			// })
+
+			// $('#chooseImage').on("click",function(){
+			// 	wx.chooseImage({
+			// 	    count: 1, // 默认9
+			// 	    sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+			// 	    sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+			// 	    success: function (res) {
+			// 	        localIds2 = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+			// 	        $('#img1').attr("src",res.localIds);
+			// 	        // $('#img2').attr("src",res.localIds[1]);
+			// 	        // location.href="http://www.baidu.com";
+
+			// 	    },
+			// 	    cancel:function(){
+			// 	    	// alert(1);
+			// 	    }
+			// 	});
+			// })
+
+			$('#chooseImage').on("click",function(){
+				wx.chooseImage({
+				    count: 3, // 默认9
+				    sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+				    sourceType: ['album'], // 可以指定来源是相册还是相机，默认二者都有
+				    success: function (res) {
+				        // localIds2 = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+				        // 
+				        // alert(res.localIds.length);
+						// $('#img1').attr("src",res.localIds[0]);
+						// $('#img2').attr("src",res.localIds[1]);
+						// $('#img3').attr("src",res.localIds[2]);
+						// var aa=res.localIds;
+						// for(var i=0;i<res.localIds.length;i++){
+						// 	if(i=res.localIds.length-1){
+						// 		aa += res.localIds[i];
+						// 	}else{
+						// 		aa += res.localIds[i]+"&";
+						// 	}
+						// }
+						// alert(res.localIds.length)
+						localStorage.setItem("uuu",JSON.stringify(res.localIds));
+						alert(JSON.parse(localStorage.getItem("uuu")).length);
+						$('#img1').attr("src",JSON.parse(localStorage.getItem("uuu"))[0]);
+						$('#img2').attr("src",JSON.parse(localStorage.getItem("uuu"))[1]);
+						$('#img3').attr("src",JSON.parse(localStorage.getItem("uuu"))[2]);
+				    },
+				    cancel:function(){
+				    	// alert(1);
+				    }
+				});
+			})
+
+			$('#uploadImage').on("click",function(){
+				wx.uploadImage({
+				    localId: localIds.toString(), // 需要上传的图片的本地ID，由chooseImage接口获得
+				    isShowProgressTips: 1, // 默认为1，显示进度提示
+				    success: function (res) {
+				        serverId = res.serverId; // 返回图片的服务器端ID
+				    }
+				});
+			})	
+				
+			$('#downloadImage').on("click",function(){
+				wx.downloadImage({
+				    serverId: serverId.toString(), // 需要下载的图片的服务器端ID，由uploadImage接口获得
+				    isShowProgressTips: 1, // 默认为1，显示进度提示
+				    success: function (res) {
+				        // localId = res.localId; // 返回图片下载后的本地ID
+				        $('#img2').attr("src",res.localId);
+				        wx.downloadImage({
+						    serverId: serverId2.toString(), // 需要下载的图片的服务器端ID，由uploadImage接口获得
+						    isShowProgressTips: 1, // 默认为1，显示进度提示
+						    success: function (res) {
+						        // localId = res.localId; // 返回图片下载后的本地ID
+						        $('#img4').attr("src",res.localId);
+						    }
+						});
+				    }
+				});
+			})
+
+
+
+			
+			$('#chooseImage2').on("click",function(){
+				wx.chooseImage({
+				    count: 1, // 默认9
+				    sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+				    sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+				    success: function (res) {
+				        localIds2 = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+				        $('#img3').attr("src",res.localIds);
+				        // $('#img2').attr("src",res.localIds[1]);
+				        // location.href="http://www.baidu.com";
+				    },
+				    cancel:function(){
+				    	// alert(1);
+				    }
+				});
+			})
+			$('#uploadImage2').on("click",function(){
+				wx.uploadImage({
+				    localId: localIds2.toString(), // 需要上传的图片的本地ID，由chooseImage接口获得
+				    isShowProgressTips: 1, // 默认为1，显示进度提示
+				    success: function (res) {
+				        serverId2 = res.serverId; // 返回图片的服务器端ID
+				    }
+				});
+			})	
+				
+			// $('#downloadImage2').on("click",function(){
+			// 	wx.downloadImage({
+			// 	    serverId: serverId2.toString(), // 需要下载的图片的服务器端ID，由uploadImage接口获得
+			// 	    isShowProgressTips: 1, // 默认为1，显示进度提示
+			// 	    success: function (res) {
+			// 	        // localId = res.localId; // 返回图片下载后的本地ID
+			// 	        $('#img4').attr("src",res.localId);
+			// 	    }
+			// 	});
+			// })
+		});
+	});
+</script>
+</html>
+
